@@ -1,0 +1,66 @@
+# SYSTEM MANAGED, DO NOT NOT EDIT, 
+# Metadata for the project
+title: "Tabular Binary Classification"
+tags: 
+  - tabular
+  - binary classification
+  - neural network
+  - python
+description: "A tabular binary classification model using neural networks"
+language:
+  name: python
+  version: "3.9"
+  title: Python
+version: 0.1.0
+blueprint: true
+handler: train.py
+section: 
+  title: "Tabular"
+  slug: tabular
+  position: 1
+envs:
+  learning_rate:
+    name: learning_rate
+    description: Tuning parameter in an optimization algorithm that determines the step size at each iteration while moving toward a minimum of a loss function
+    short_description: Learning Rate
+    type: number
+    allow_decimal: true
+    default: 0.001
+    min: 0.0
+    max: 1.0
+  min_delta:
+    name: min_deltae
+    description: Minimum change in the monitored quantity to qualify as an improvement, i.e. an absolute change of less than min_delta, will count as no improvement
+    short_description: Minimum Delta
+    type: number
+    allow_decimal: true
+    default: 0.0002
+    min: 0.0
+    max: 1.0
+  patience:
+    name: patience
+    description: Number of epochs with no improvement after which training will be stopped
+    short_description: Patience
+    type: number
+    allow_decimal: false
+    default: 20
+    min: 0
+    max: 100
+  epochs:
+    name: epochs
+    description: Number of epochs to train the model
+    short_description: Epochs
+    type: number
+    allow_decimal: false
+    default: 500
+    min: 100
+    max: 1000
+  batch_size:
+    name: batch_size
+    description: Number of samples per gradient update
+    short_description: Batch Size
+    type: number
+    allow_decimal: false
+    default: 1000
+    min: 100
+    max: 5000
