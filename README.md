@@ -13,7 +13,6 @@ AutoML techniques typically involve automating one or more of the following step
 5. Model Evaluation: Assessing the trained model's performance using appropriate metrics.
 6. Model Deployment: Generating a serialized model artifact for inference or production deployment.
 
-
 ## Getting Started
 
 1. Clone this repository to your local machine.
