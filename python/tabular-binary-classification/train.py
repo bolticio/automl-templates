@@ -13,7 +13,7 @@ from tensorflow import keras
 from tensorflow.keras.callbacks import EarlyStopping  # type: ignore
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--datasets", default={"training_dataset_1": "./data/train.csv"}, type=json.loads)
+parser.add_argument("--datasets", default={"training_dataset_1": ["./data/train.csv"]}, type=json.loads)
 parser.add_argument("--model", default=os.getcwd(), type=str)
 parser.add_argument("--metrics", default=f"{os.getcwd()}/metrics.json", type=str)
 parser.add_argument("--hparams", default={
@@ -30,7 +30,7 @@ if args.model.startswith("gs://"):
     args.model = Path("/gcs/" + args.model[5:])
     args.model.mkdir(parents=True)
 
-dataset = args.datasets.get("training_dataset_1")
+dataset = args.datasets.get("training_dataset_1")[0]
 hparams = args.hparams
 
 train = pd.read_csv(dataset, index_col=0)

@@ -27,7 +27,7 @@ pip3 install -r requirements.txt
 Run the training script
 
 ```python
-python3 train.py --datasets '{"training_dataset_1": "./data/train.csv"}' --model "$(pwd)" --metrics "$(pwd)/metrics.json" --hparams '{"learning_rate": 0.001, "min_delta": 0.0002, "patience": 20, "epochs": 500, "batch_size": 1000}'
+python3 train.py --datasets '{"training_dataset_1": ["./data/train.csv"]}' --model "$(pwd)" --metrics "$(pwd)/metrics.json" --hparams '{"learning_rate": 0.001, "min_delta": 0.0002, "patience": 20, "epochs": 500, "batch_size": 1000}'
 ```
 
 ## Inference
