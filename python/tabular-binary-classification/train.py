@@ -14,7 +14,7 @@ from tensorflow.keras.callbacks import EarlyStopping  # type: ignore
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--datasets", default={"training_dataset_1": ["./data/train.csv"]}, type=json.loads)
-parser.add_argument("--model", default=os.getcwd(), type=str)
+parser.add_argument("--model", default=os.getenv("AIP_MODEL_DIR"), type=str)
 parser.add_argument("--metrics", default=f"{os.getcwd()}/metrics.json", type=str)
 parser.add_argument("--hparams", default={
     "learning_rate": 0.001,
