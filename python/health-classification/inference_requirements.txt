@@ -1,0 +1,10 @@
+flask
+pandas
+scikit-learn
+tensorflow
+keras
+numpy
+google-cloud-storage
+kserve
+ray
+keras_applications==1.0.8

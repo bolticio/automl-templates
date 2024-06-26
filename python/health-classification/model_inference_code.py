@@ -1,0 +1,116 @@
+import logging
+import os
+import pickle
+from typing import Dict
+
+import kserve
+import numpy as np
+import pandas as pd
+from keras.models import Model
+from kserve import Model
+from kserve.model import ModelInferRequest
+from tensorflow.keras.layers import TFSMLayer
+
+
+class DefaultCustomModel(Model):
+    def __init__(self, name: str):
+        super().__init__(name)
+        self.name = name
+        self.model = None
+        self.preprocessor = None
+        self.label_encoder = None
+        base_path = "models/6673b883140869328583e126/v1/finetuning/aiplatform-custom-training-2024-06-25-10:41:33.827/model"
+        self.download_many_blobs_with_transfer_manager(bucket_name="fcs-c801ed9d-3a1c-4a48-8cf4-11a94808cd41-asia-south1",
+                                                       blob_names=[f"{base_path}/fingerprint.pb",
+                                                                   f"{base_path}/saved_model.pb",
+                                                                   f"{base_path}/variables/variables.data-00000-of-00001",
+                                                                   f"{base_path}/variables/variables.index",
+                                                                   f"{base_path}/preprocessor.pkl",
+                                                                   f"{base_path}/label_encoder.pkl"],
+                                                       destination_directory="./models")
+        self.load()
+
+    def download_many_blobs_with_transfer_manager(
+        bucket_name, blob_names, destination_directory="", workers=8
+    ):
+        """Download blobs in a list by name, concurrently in a process pool.
+
+        The filename of each blob once downloaded is derived from the blob name and
+        the `destination_directory `parameter. For complete control of the filename
+        of each blob, use transfer_manager.download_many() instead.
+
+        Directories will be created automatically as needed to accommodate blob
+        names that include slashes.
+        """
+
+        from google.cloud.storage import Client, transfer_manager
+
+        storage_client = Client()
+        bucket = storage_client.bucket(bucket_name)
+
+        results = transfer_manager.download_many_to_path(
+            bucket, blob_names, destination_directory=destination_directory, max_workers=workers
+        )
+
+        for name, result in zip(blob_names, results):
+            # The results list is either `None` or an exception for each blob in
+            # the input list, in order.
+
+            if isinstance(result, Exception):
+                print("Failed to download {} due to exception: {}".format(name, result))
+            else:
+                print("Downloaded {} to {}.".format(name, destination_directory + name))
+
+    def load(self):
+        # model_dir = os.getenv("GCS_STORAGE", "./models")
+        model_dir = "./models"
+        model_path = os.path.join(model_dir)
+        preprocessor_path = os.path.join(model_dir, "preprocessor.pkl")
+        label_encoder_path = os.path.join(model_dir, "label_encoder.pkl")
+
+        # Load the model
+        self.model = TFSMLayer(model_path, call_endpoint='serving_default')
+
+        # Load the preprocessor
+        with open(preprocessor_path, 'rb') as f:
+            self.preprocessor = pickle.load(f)
+
+        # Load the label encoder
+        with open(label_encoder_path, 'rb') as f:
+            self.label_encoder = pickle.load(f)
+
+        logging.info("Model and preprocessors loaded successfully.")
+        self.ready = True
+
+    def predict(self, payload: ModelInferRequest, headers: Dict[str, str] = None):
+        # Extract data from the request
+        instances = payload["instances"]
+        input_data = pd.DataFrame.from_dict(instances)
+
+        # Log the shape of input data
+        logging.info(f"Input data shape: {input_data.shape}")
+
+        # Preprocess the input data
+        input_data_preprocessed = self.preprocessor.transform(input_data)
+        input_data_preprocessed = input_data_preprocessed.toarray()
+
+        # Make predictions
+        predictions = self.model(input_data_preprocessed)
+
+        predictions = np.array(predictions.get("output_0"))
+
+        decoded_predictions = self.label_encoder.inverse_transform(predictions)
+
+        flat_predictions = [pred[0] for pred in decoded_predictions]
+
+        return {
+            "predictions": flat_predictions,
+            "max_indices": np.argmax(predictions, axis=1).tolist(),
+            "max_values": np.max(predictions, axis=1).tolist()
+        }
+
+
+if __name__ == "__main__":
+    model = DefaultCustomModel("health-model")
+    model.load()
+    kserve.ModelServer(workers=1).start([model])
