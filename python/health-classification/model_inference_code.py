@@ -19,20 +19,29 @@ class DefaultCustomModel(Model):
         self.model = None
         self.preprocessor = None
         self.label_encoder = None
-        base_path = "models/6673b883140869328583e126/v1/finetuning/aiplatform-custom-training-2024-06-25-10:41:33.827/model"
-        self.download_many_blobs_with_transfer_manager(bucket_name="fcs-c801ed9d-3a1c-4a48-8cf4-11a94808cd41-asia-south1",
-                                                       blob_names=[f"{base_path}/fingerprint.pb",
-                                                                   f"{base_path}/saved_model.pb",
-                                                                   f"{base_path}/variables/variables.data-00000-of-00001",
-                                                                   f"{base_path}/variables/variables.index",
-                                                                   f"{base_path}/preprocessor.pkl",
-                                                                   f"{base_path}/label_encoder.pkl"],
-                                                       destination_directory="./models")
+        self.bucket_name, self.base_path = self.extract_bucket_and_blob_name(os.getenv("GCS_STORAGE"))
+        self.download_many_blobs_with_transfer_manager(bucket_name=self.bucket_name,
+                                                       blob_names=[f"{self.base_path}/fingerprint.pb",
+                                                                   f"{self.base_path}/saved_model.pb",
+                                                                   f"{self.base_path}/variables/variables.data-00000-of-00001",
+                                                                   f"{self.base_path}/variables/variables.index",
+                                                                   f"{self.base_path}/preprocessor.pkl",
+                                                                   f"{self.base_path}/label_encoder.pkl"],
+                                                       destination_directory="./")
         self.load()
 
-    def download_many_blobs_with_transfer_manager(
-        bucket_name, blob_names, destination_directory="", workers=8
-    ):
+    def extract_bucket_and_blob_name(self, gcs_uri: str):
+        """Extracts the bucket name and blob name from a GCS URI."""
+        uri_without_gs = gcs_uri.removeprefix('gs://')
+        bucket_name, _, blob_name = uri_without_gs.partition('/')
+        return bucket_name, blob_name
+
+    def download_many_blobs_with_transfer_manager(self,
+                                                  bucket_name,
+                                                  blob_names,
+                                                  destination_directory="",
+                                                  workers=8
+                                                  ):
         """Download blobs in a list by name, concurrently in a process pool.
 
         The filename of each blob once downloaded is derived from the blob name and
@@ -62,14 +71,12 @@ class DefaultCustomModel(Model):
                 print("Downloaded {} to {}.".format(name, destination_directory + name))
 
     def load(self):
-        # model_dir = os.getenv("GCS_STORAGE", "./models")
-        model_dir = "./models"
-        model_path = os.path.join(model_dir)
-        preprocessor_path = os.path.join(model_dir, "preprocessor.pkl")
-        label_encoder_path = os.path.join(model_dir, "label_encoder.pkl")
+
+        preprocessor_path = os.path.join(self.base_path, "preprocessor.pkl")
+        label_encoder_path = os.path.join(self.base_path, "label_encoder.pkl")
 
         # Load the model
-        self.model = TFSMLayer(model_path, call_endpoint='serving_default')
+        self.model = TFSMLayer(self.base_path, call_endpoint='serving_default')
 
         # Load the preprocessor
         with open(preprocessor_path, 'rb') as f:
@@ -111,6 +118,6 @@ class DefaultCustomModel(Model):
 
 
 if __name__ == "__main__":
-    model = DefaultCustomModel("health-model")
+    model = DefaultCustomModel(os.getenv("MODEL_NAME"))
     model.load()
     kserve.ModelServer(workers=1).start([model])
