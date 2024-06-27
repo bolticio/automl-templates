@@ -68,4 +68,5 @@ section:
   title: "Tabular"
   slug: tabular
   position: 1
+infernece_container_uri: "asia-south1-docker.pkg.dev/fynd-cloud-non-prod/kserve/bert-classification-model:v1"
 envs:
