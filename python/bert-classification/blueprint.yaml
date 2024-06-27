@@ -1,0 +1,71 @@
+# SYSTEM MANAGED, DO NOT NOT EDIT, 
+# Metadata for the project
+title: "Medical Condition Bert Classifier"
+tags: 
+  - Medical Condition Classification
+  - BERT
+  - Transformers
+  - Text Classification
+  - Healthcare AI
+  - Deep Learning
+  - NLP (Natural Language Processing)
+  - Machine Learning
+  - Model Fine-tuning
+  - Clinical Decision Support
+short_description: "A BERT-based model for classifying medical conditions from text data, using fine-tuned transformers."
+description: |
+  The `MedicalConditionBERTClassifier` is a state-of-the-art deep learning model designed to classify medical conditions from a variety of textual data sources. Utilizing the robust BERT (Bidirectional Encoder Representations from Transformers) architecture, this model excels in understanding and processing complex medical texts, including transcriptions, descriptions, and sample names. The primary goal of this model is to accurately predict medical specialties, thereby assisting in medical data analysis, healthcare automation, and clinical decision support systems.
+
+  ### Key Features
+
+  - **Advanced NLP Techniques**: Built on BERT, the model takes advantage of advanced natural language processing techniques to understand and classify medical texts with high accuracy.
+  - **Multi-field Input Handling**: Combines multiple fields (transcription, description, sample name) into a single input for comprehensive analysis.
+  - **Fine-tuned for Medical Data**: Specifically fine-tuned on medical datasets to enhance its performance in the healthcare domain.
+  - **Robust Performance Metrics**: Evaluates its performance using a range of metrics including accuracy, precision, recall, and F1 score, ensuring reliability and robustness.
+  - **Versatile Applications**: Suitable for various applications such as medical data analysis, healthcare automation, and supporting clinical decisions.
+
+  ### Model Architecture
+
+  The model employs the BERT architecture, a transformer-based model pre-trained on a vast corpus of text data. It is fine-tuned on domain-specific datasets to adapt it for the classification of medical conditions. The architecture includes:
+
+  - **BERT Tokenizer**: Tokenizes the input text to prepare it for the BERT model.
+  - **Sequence Classification Head**: A classification layer on top of the BERT model to predict the medical specialty from the encoded text.
+
+  ### Training and Evaluation
+
+  The model is trained and evaluated using a dataset split into training, validation, and test sets. The training process involves:
+
+  1. **Data Preparation**: Combining relevant text fields and tokenizing the inputs.
+  2. **Model Initialization**: Initializing the BERT-based classifier with a specified number of labels.
+  3. **Training Loop**: Training the model over multiple epochs with the AdamW optimizer, adjusting learning rates as necessary.
+  4. **Evaluation**: Evaluating the model on the test set to compute performance metrics including accuracy, precision, recall, and F1 score.
+
+  ### Performance Metrics
+
+  The performance of the `MedicalConditionBERTClassifier` is measured using several key metrics to ensure its effectiveness in real-world applications:
+
+  - **Accuracy**: The proportion of true results among the total number of cases examined.
+  - **Precision**: The ratio of correctly predicted positive observations to the total predicted positives.
+  - **Recall**: The ratio of correctly predicted positive observations to the all observations in actual class.
+  - **F1 Score**: The weighted average of Precision and Recall.
+
+  ### Usage
+
+  The model can be used in various scenarios where understanding and classifying medical texts are crucial. To use the model:
+
+  1. **Data Preparation**: Ensure the input data is formatted correctly, with necessary fields combined into a single text input.
+  2. **Model Loading**: Load the pre-trained model and tokenizer.
+  3. **Inference**: Pass the text data through the model to obtain predictions.
+
+language:
+  name: python
+  version: "3.9"
+  title: Python
+version: 0.1.0
+blueprint: true
+handler: train.py
+section: 
+  title: "Tabular"
+  slug: tabular
+  position: 1
+envs:
