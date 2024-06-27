@@ -155,7 +155,7 @@ metrics_dict = {
 
 logging.info(f"Save model to: {args.model}")
 # Create the directory if it doesn't exist
-model_saved_path = os.path.join(args.model, "1")
+model_saved_path = os.path.join(args.model)
 os.makedirs(model_saved_path, exist_ok=True)
 
 with open(args.metrics, "w") as fp:
