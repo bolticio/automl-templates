@@ -91,7 +91,7 @@ model.fit(X_train, y_train, epochs=2, validation_data=(X_valid, y_valid))
 if not os.path.exists(args.model):
     os.makedirs(args.model)
 
-model_saved_path = os.path.join(args.model, "models/3")
+model_saved_path = os.path.join(args.model)
 # model.save(model_saved_path+ "saved_model.keras")
 
 # Evaluate the model on the test set
@@ -116,7 +116,7 @@ logging.info(f"Save model to: {args.model}")
 # Create the directory if it doesn't exist
 os.makedirs(model_saved_path, exist_ok=True)
 
-with open(os.path.join(model_saved_path, "metrics.json"), "w") as fp:
+with open(args.metrics, "w") as fp:
     json.dump(metrics_dict, fp)
 
 # Save preprocessor

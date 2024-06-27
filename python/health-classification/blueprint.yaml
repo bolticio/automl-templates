@@ -1,0 +1,56 @@
+# SYSTEM MANAGED, DO NOT NOT EDIT, 
+# Metadata for the project
+title: "Health Classification"
+tags: 
+  - TensorFlow
+  - Keras
+  - Classification
+  - Medical Condition Prediction
+  - Deep Learning
+  - Machine Learning
+  - Model Training
+  - Model Evaluation
+  - Health Data
+short_description: "A TensorFlow-based classification model designed to predict medical conditions from various patient data. The model utilizes both numerical and categorical features, with preprocessing pipelines for efficient data handling."
+description: |
+  ### Overview Description
+
+  This model is a deep learning classification model implemented using TensorFlow and Keras. It is designed to predict medical conditions based on a variety of patient data, including both numerical and categorical features. The preprocessing steps include scaling for numerical features and one-hot encoding for categorical features.
+
+  The model architecture consists of the following layers:
+  - **Input Layer:** Accepts preprocessed features.
+  - **Hidden Layers:** Two dense layers with 64 and 32 units respectively, using ReLU activation functions.
+  - **Output Layer:** A dense layer with units equal to the number of classes, using a softmax activation function for multi-class classification.
+
+  The model is compiled with the Adam optimizer and categorical cross-entropy loss, and it tracks accuracy during training.
+
+  The model is trained on provided datasets, with a validation set used for tuning. After training, the model is evaluated on a test set, yielding metrics such as accuracy, precision, recall, F1 score, and ROC AUC.
+
+  The following components are saved for future inference:
+  - **Trained Model:** Saved using TensorFlow's `saved_model.save` method.
+  - **Preprocessing Pipeline:** Handles numerical scaling and categorical one-hot encoding.
+  - **Label Encoder:** Transforms categorical labels into numerical format suitable for training.
+
+  The saved model and components ensure that future predictions can be made using the same preprocessing and label encoding steps as used during training.
+
+  #### Metrics
+  - **Problem Type:** Classification
+  - **Accuracy:** (Calculated on test set)
+  - **Precision:** (Calculated on test set, weighted average)
+  - **Recall:** (Calculated on test set, weighted average)
+  - **F1 Score:** (Calculated on test set, weighted average)
+  - **ROC AUC:** (Calculated on test set, using the one-vs-rest approach)
+
+  This model is particularly suited for applications in the health domain, where accurate prediction of medical conditions from diverse patient data is essential.
+language:
+  name: python
+  version: "3.9"
+  title: Python
+version: 0.1.0
+blueprint: true
+handler: train.py
+section: 
+  title: "Tabular"
+  slug: tabular
+  position: 1
+envs:
