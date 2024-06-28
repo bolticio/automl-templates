@@ -24,6 +24,14 @@ cd python/tabular-binary-classification
 pip3 install -r requirements.txt
 ```
 
+Load the environment variables in shell.
+
+```sh
+export AIP_MODEL_DIR=./
+export MODEL_NAME=customer-satisfaction-predictor
+export GCS_STORAGE=gs://fcs-c801ed9d-3a1c-4a48-8cf4-11a94808cd41-0f256eb2-asia-south1/models/667d218426ede99100cd83d0/v1/training/aiplatform-custom-training-2024-06-27-08:41:12.011/model
+```
+
 Run the training script
 
 ```python

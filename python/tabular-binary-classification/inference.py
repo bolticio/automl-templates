@@ -5,6 +5,7 @@ from typing import Dict, Union
 import kserve
 import numpy as np
 import pandas as pd
+from google.cloud.storage import Client
 from kserve.model import ModelInferRequest, ModelInferResponse
 from sklearn.preprocessing import MinMaxScaler
 
@@ -16,9 +17,44 @@ class CustomModel(kserve.Model):
         self.model = None
         self.scaler = MinMaxScaler()
         self.ready = False
+        self.file_name = "model.pkl"
+
+    def extract_bucket_and_blob_name(self, gcs_uri: str):
+        """Extracts the bucket name and blob name from a GCS URI."""
+        uri_without_gs = gcs_uri.removeprefix('gs://')
+        bucket_name, _, blob_name = uri_without_gs.partition('/')
+        return bucket_name, blob_name
+
+    def download_blob(self, bucket_name: str, source_blob_name: str, destination_file_name: str):
+        """Downloads a blob from the bucket."""
+        # The ID of your GCS bucket
+        # bucket_name = "your-bucket-name"
+
+        # The ID of your GCS object
+        # source_blob_name = "storage-object-name"
+
+        # The path to which the file should be downloaded
+        # destination_file_name = "local/path/to/file"
+
+        storage_client = Client()
+
+        bucket = storage_client.bucket(bucket_name)
+
+        blob = bucket.blob(source_blob_name)
+        blob.download_to_filename(destination_file_name)
+
+        print(f"Downloaded storage object {source_blob_name} from bucket {bucket_name}"
+              f" to local file {destination_file_name}.")
 
     def load(self):
-        with open("model.pkl", "rb") as f:
+        if not os.path.exists(self.file_name):
+            self.bucket_name, self.blob_name = self.extract_bucket_and_blob_name(gcs_uri=os.getenv("GCS_STORAGE"))
+
+            self.download_blob(bucket_name=self.bucket_name,
+                               source_blob_name=f"{self.blob_name}/{self.file_name}",
+                               destination_file_name=self.file_name)
+
+        with open(self.file_name, "rb") as f:
             self.model = pickle.load(f)
         self.ready = True
 
