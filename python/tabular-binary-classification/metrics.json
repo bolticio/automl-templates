@@ -1,1 +1,3 @@
-{"accuracy": 0.866668188458729, "average precision score": 0.8183336102655987, "classification report": "              precision    recall  f1-score   support\n\n           0       0.86      0.87      0.87     21914\n           1       0.87      0.86      0.87     21894\n\n    accuracy                           0.87     43808\n   macro avg       0.87      0.87      0.87     43808\nweighted avg       0.87      0.87      0.87     43808\n", "confusion_matrix": [[19047, 2867], [2974, 18920]], "roc_auc": 0.9380634996605438, "f1 score": 0.8662805338705616, "precision_score": 0.8684077660990499, "recall_score": 0.8641636978167534}
+version https://git-lfs.github.com/spec/v1
+oid sha256:8c5f5664cf6c2b9d8ab547e83ae2c7d8ed6a6122eaaf5b61e47e92d2ba434d5c
+size 631

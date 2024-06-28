@@ -22,7 +22,7 @@ envs:
   - name: learning_rate
     description: Tuning parameter in an optimization algorithm that determines the step size at each iteration while moving toward a minimum of a loss function
     short_description: Learning Rate
-    type: number
+    type: integer
     allow_decimal: true
     default: 0.001
     min: 0.0
@@ -30,7 +30,7 @@ envs:
   - name: min_delta
     description: Minimum change in the monitored quantity to qualify as an improvement, i.e. an absolute change of less than min_delta, will count as no improvement
     short_description: Minimum Delta
-    type: number
+    type: integer
     allow_decimal: true
     default: 0.0002
     min: 0.0
@@ -38,7 +38,7 @@ envs:
   - name: patience
     description: Number of epochs with no improvement after which training will be stopped
     short_description: Patience
-    type: number
+    type: integer
     allow_decimal: false
     default: 20
     min: 0
@@ -46,7 +46,7 @@ envs:
   - name: epochs
     description: Number of epochs to train the model
     short_description: Epochs
-    type: number
+    type: integer
     allow_decimal: false
     default: 500
     min: 100
@@ -54,7 +54,7 @@ envs:
   - name: batch_size
     description: Number of samples per gradient update
     short_description: Batch Size
-    type: number
+    type: integer
     allow_decimal: false
     default: 1000
     min: 100

@@ -30,10 +30,30 @@ Run the training script
 python3 train.py --datasets '{"training_dataset_1": ["./data/train.csv"]}' --model "$(pwd)" --metrics "$(pwd)/metrics.json" --hparams '{"learning_rate": 0.001, "min_delta": 0.0002, "patience": 20, "epochs": 500, "batch_size": 1000}'
 ```
 
+## Testing
+
+Run the training script
+
+```python
+python3 test.py
+```
+
 ## Inference
 
-Run the inference script
+Run the KServe inference script
 
 ```python
 python3 inference.py
 ```
+
+Sample curl for inference.
+
+```curl
+curl --location 'http://127.0.0.1:8080/v1/models/customer-satisfaction-predictor:predict' \
+--header 'Content-Type: application/json' \
+--data '{
+    "instances": []
+}'
+```
+
+Use the `test.json` file for testing instances.
