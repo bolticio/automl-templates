@@ -85,3 +85,4 @@ coverage.xml
 
 # Mypy cache
 .mypy_cache/
+docker.sh

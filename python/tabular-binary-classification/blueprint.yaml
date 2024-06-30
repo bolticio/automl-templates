@@ -20,7 +20,7 @@ section:
   position: 1
 envs:
   - name: learning_rate
-    description: Tuning parameter in an optimization algorithm that determines the step size at each iteration while moving toward a minimum of a loss function
+    description: Learning parameter determines the step size at each iteration while moving toward a minimum of a loss function
     short_description: Learning Rate
     type: integer
     allow_decimal: true

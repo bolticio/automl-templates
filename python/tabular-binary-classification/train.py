@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 if args.model.startswith("gs://"):
     args.model = Path("/gcs/" + args.model[5:])
-    args.model.mkdir(parents=True)
+    args.model.mkdir(parents=True, exist_ok=True)
 
 dataset = args.datasets.get("training_dataset_1")[0]
 hparams = args.hparams
@@ -102,7 +102,8 @@ history = model.fit(X_train, y_train,
 predictions = model.predict(X_test)
 binary_predictions = (predictions >= 0.5).astype(int)
 
-pickle.dump(model, open("/".join([str(args.model), "model.pkl"]), "wb"))
+with open(f"{str(args.model)}/model.pkl", 'wb') as f:
+    pickle.dump(model, f)
 
 eval_metrics = {
     "accuracy": metrics.accuracy_score(y_test, binary_predictions),

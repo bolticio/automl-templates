@@ -65,3 +65,14 @@ curl --location 'http://127.0.0.1:8080/v1/models/customer-satisfaction-predictor
 ```
 
 Use the `test.json` file for testing instances.
+
+## Build image for inference
+
+```sh
+docker build -t tabular-binary-classification:v1 .
+docker run -d -p 8080:8080 \
+  -e AIP_MODEL_DIR=./ \
+  -e MODEL_NAME=customer-satisfaction-predictor \
+  -e GCS_STORAGE=gs://fcs-c801ed9d-3a1c-4a48-8cf4-11a94808cd41-0f256eb2-asia-south1/models/667d218426ede99100cd83d0/v1/training/aiplatform-custom-training-2024-06-27-08:41:12.011/model \
+  tabular-binary-classification:v1
+```

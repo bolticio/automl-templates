@@ -18,6 +18,8 @@ class CustomModel(kserve.Model):
         self.scaler = MinMaxScaler()
         self.ready = False
         self.file_name = "model.pkl"
+        self.bucket_name = None
+        self.blob_name = None
 
     def extract_bucket_and_blob_name(self, gcs_uri: str):
         """Extracts the bucket name and blob name from a GCS URI."""
@@ -58,8 +60,8 @@ class CustomModel(kserve.Model):
             self.model = pickle.load(f)
         self.ready = True
 
-    def preprocess(self, payload: ModelInferRequest,
-                   headers: Dict[str, str] = None) -> np.ndarray:
+    async def preprocess(self, payload: ModelInferRequest,
+                         headers: Dict[str, str] = None) -> np.ndarray:
         if not payload["instances"]:
             return np.array([])
 
@@ -79,20 +81,22 @@ class CustomModel(kserve.Model):
         data = inputs_df.drop(features_to_drop, axis=1)
         return self.scaler.fit_transform(data)
 
-    def predict(self, payload: np.ndarray, headers: Dict[str, str] = None) -> Union[Dict, ModelInferResponse]:
+    async def predict(self, payload: np.ndarray, headers: Dict[str, str] = None) -> Union[Dict, ModelInferResponse]:
         if payload.size == 0:
-            return {}
+            return []
 
         predictions = self.model.predict(payload)
         return predictions
 
-    def postprocess(self, result: Union[Dict, ModelInferResponse], headers: Dict[str, str] = None) -> Union[Dict, ModelInferResponse]:
-        if not result:
-            return result
+    async def postprocess(self, result: np.ndarray,
+                          headers: Dict[str, str] = None) -> Union[Dict, ModelInferResponse]:
+
+        if len(result) == 0:
+            return {"predictions": []}
         binary_predictions = (result >= 0.5).astype(int)
 
-        predictions = ["satisfied" if binary_prediction[0]
-                       else "unsatisfied" for binary_prediction in binary_predictions]
+        predictions = ["unsatisfied" if binary_prediction[0]
+                       else "satisfied" for binary_prediction in binary_predictions]
         return {"predictions":  predictions}
 
 
