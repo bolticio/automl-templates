@@ -1,0 +1,76 @@
+# SYSTEM MANAGED, DO NOT NOT EDIT,
+# Metadata for the project
+title: "Email Spam Dectection Model"
+tags:
+  - text
+  - huggingface
+  - binary classification
+description: "Email Spam Dectection Model"
+language:
+  name: python
+  version: "3.9"
+  title: Python
+version: 0.1.0
+blueprint: true
+handler: email_spam_dectection.py
+section:
+  title: "Tabular"
+  slug: tabular
+  position: 2
+envs:
+  - name: num_train_epochs
+    description: Total number of training epochs to perform
+    short_description: Train epochs
+    type: integer
+    allow_decimal: false
+    default: 1
+    min: 1
+    max: 10
+  - name: per_device_train_batch_size
+    description: The batch size per GPU/XPU/TPU/MPS/NPU core/CPU for training.
+    short_description: Per device train batch size
+    type: integer
+    allow_decimal: false
+    default: 64
+    min: 8
+    max: 256
+  - name: per_device_eval_batch_size
+    description: The batch size per GPU/XPU/TPU/MPS/NPU core/CPU for evaluation.
+    short_description: Per device evaluation batch size
+    type: integer
+    allow_decimal: false
+    default: 64
+    min: 8
+    max: 256
+  - name: warmup_steps
+    description:
+    short_description: Number of steps used for a linear warmup from 0 to learning_rate. Overrides any effect of warmup_ratio.
+    type: integer
+    allow_decimal: false
+    default: 100
+    min: 0
+    max: 1000
+  - name: weight_decay
+    description: The weight decay to apply (if not zero) to all layers except all bias and LayerNorm weights in [AdamW] optimizer.
+    short_description: Weight decay
+    type: float
+    allow_decimal: true
+    default: 0.01
+    min: 0
+    max: 1
+  - name: logging_steps
+    description: Number of update steps between two logs if logging_strategy="steps".
+    short_description: Logging steps
+    type: integer
+    allow_decimal: false
+    default: 10
+    min: 10
+    max: 1000
+  - name: early_stopping_patience
+    description: Use with metric_for_best_model to stop training when the specified metric worsens for early_stopping_patience evaluation calls.
+    short_description: Early stopping patience
+    type: integer
+    allow_decimal: false
+    default: 3
+    min: 1
+    max: 10
