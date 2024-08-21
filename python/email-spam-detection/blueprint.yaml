@@ -5,6 +5,7 @@ tags:
   - text
   - huggingface
   - binary classification
+  - tensorflow 2.14
 description: "Email Spam Dectection Model"
 language:
   name: python
@@ -43,8 +44,8 @@ envs:
     min: 8
     max: 256
   - name: warmup_steps
-    description:
-    short_description: Number of steps used for a linear warmup from 0 to learning_rate. Overrides any effect of warmup_ratio.
+    description: Number of steps used for a linear warmup from 0 to learning_rate. Overrides any effect of warmup_ratio.
+    short_description: Warmup steps
     type: integer
     allow_decimal: false
     default: 100

@@ -1,7 +1,6 @@
 import argparse
 import json
 import os
-import shutil
 from pathlib import Path
 
 import pandas as pd
@@ -87,7 +86,7 @@ training_args = TrainingArguments(
     weight_decay=weight_decay,            # strength of weight decay
     logging_dir=f"{local_model_dir}/logs",  # directory for storing logs
     logging_steps=logging_steps,
-    evaluation_strategy="epoch",          # evaluation is performed at the end of each epoch
+    eval_strategy="epoch",                # evaluation is performed at the end of each epoch
     save_strategy="epoch",                # save model at the end of each epoch
     fp16=True if device.type == "cuda" else False,  # mixed precision training if GPU is available
     load_best_model_at_end=True           # Load the best model found during training at the end of training
@@ -107,11 +106,11 @@ trainer.train()
 
 # Save the trained model locally
 trainer.save_model(local_model_dir)
+tokenizer.save_pretrained(local_model_dir)
 
 
 # Upload local model directory to GCS
-def upload_directory_with_transfer_manager(bucket_name, source_directory, workers=8):
-
+def upload_directory_with_transfer_manager(bucket_name: str, source_directory: str, blob_name_prefix: str, workers=8):
     storage_client = Client()
     bucket = storage_client.bucket(bucket_name)
 
@@ -119,32 +118,33 @@ def upload_directory_with_transfer_manager(bucket_name, source_directory, worker
     paths = directory_as_path_obj.rglob("*")
     file_paths = [path for path in paths if path.is_file()]
     relative_paths = [path.relative_to(source_directory) for path in file_paths]
-    string_paths = [str(path) for path in relative_paths]
+    filenames = [str(path) for path in relative_paths]
 
-    print("Found {} files.".format(len(string_paths)))
+    print("Found {} files.".format(len(filenames)))
 
-    results = transfer_manager.upload_many_from_filenames(
-        bucket, string_paths, source_directory=source_directory, max_workers=workers
-    )
+    results = transfer_manager.upload_many_from_filenames(bucket=bucket,
+                                                          filenames=filenames,
+                                                          source_directory=source_directory,
+                                                          blob_name_prefix=blob_name_prefix,
+                                                          max_workers=workers)
 
-    for name, result in zip(string_paths, results):
+    for name, result in zip(filenames, results):
         if isinstance(result, Exception):
             print(f"Failed to upload {name} due to exception: {result}")
         else:
-            print(f"Uploaded {name} to {bucket.name}.")
+            print(f"Uploaded {name} to {bucket.name}/{blob_name_prefix}{name}.")
 
 
 # Upload model to GCS if args.model starts with gs://
 if args.model.startswith("gs://"):
     # Extract bucket name and destination prefix from the GCS path
     bucket_name = args.model[5:].split("/")[0]
-    destination_prefix = "/".join(args.model[5:].split("/")[1:])
+    blob_name_prefix = "/".join(args.model[5:].split("/")[1:])
 
     # Upload the local model directory to GCS
-    upload_directory_with_transfer_manager(bucket_name, local_model_dir)
-else:
-    # If not GCS, just move the local model directory to the specified model directory
-    shutil.move(local_model_dir, args.model)
+    upload_directory_with_transfer_manager(bucket_name=bucket_name,
+                                           source_directory=local_model_dir,
+                                           blob_name_prefix=blob_name_prefix)
 
 # Save the training metrics
 metrics = trainer.state.log_history[-1]  # Retrieve the latest metrics
